@@ -46,7 +46,7 @@ export function AdminDashboard({
 
   async function saveContent() {
     if (!hasDatabaseConfig) {
-      setStatus("Chưa thể lưu: cần cấu hình DATABASE_URL và DIRECT_URL cho Prisma.");
+      setStatus("Chưa thể lưu: cần cấu hình DATABASE_URL cho Prisma.");
       return;
     }
 

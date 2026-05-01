@@ -5,9 +5,7 @@ const globalForPrisma = globalThis as unknown as {
   prisma?: PrismaClient;
 };
 
-export const hasDatabaseConfig = Boolean(
-  process.env.DATABASE_URL && process.env.DIRECT_URL,
-);
+export const hasDatabaseConfig = Boolean(process.env.DATABASE_URL);
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL,

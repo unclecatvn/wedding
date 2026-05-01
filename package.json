@@ -4,12 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev --webpack",
-    "build": "next build --webpack",
+    "build": "prisma generate && next build --webpack",
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "prisma:generate": "prisma generate",
-    "db:push": "prisma db push --url \"$DIRECT_URL\""
+    "db:push": "prisma db push --url \"$DIRECT_URL\"",
+    "vercel-build": "npm run build"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

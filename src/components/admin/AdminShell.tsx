@@ -97,7 +97,7 @@ export function AdminShell({
         {!hasDatabaseConfig ? (
           <Notice>
             Chưa cấu hình Prisma database. Admin vẫn hiển thị dữ liệu fallback,
-            nhưng lưu nội dung và RSVP cần DATABASE_URL/DIRECT_URL.
+            nhưng lưu nội dung và RSVP cần DATABASE_URL.
           </Notice>
         ) : null}
         {!hasStorageConfig ? (
