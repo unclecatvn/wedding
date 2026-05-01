@@ -1,26 +1,124 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #100d0b;
+  --foreground: #fffaf1;
+  --gold: #d7b56d;
+  --cream: #f6efe2;
+  --clay: #9b6a58;
+  --ink: #17120f;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-gold: var(--gold);
+  --color-cream: var(--cream);
+  --color-clay: var(--clay);
+  --color-ink: var(--ink);
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-serif);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), Arial, Helvetica, sans-serif;
+}
+
+.wedding-theme-dark {
+  --background: #100d0b;
+  --foreground: #fffaf1;
+  --gold: #d7b56d;
+  --cream: #f6efe2;
+  --clay: #9b6a58;
+  --ink: #17120f;
+}
+
+.wedding-theme-light {
+  --background: #f6efe2;
+  --foreground: #17120f;
+  --gold: #9b6a58;
+  --cream: #f6efe2;
+  --clay: #7c5145;
+  --ink: #17120f;
+}
+
+.wedding-theme-light .text-cream,
+.wedding-theme-light .text-cream\/80 {
+  color: #17120f !important;
+}
+
+.wedding-theme-light .text-stone-200,
+.wedding-theme-light .text-stone-300,
+.wedding-theme-light .text-stone-400 {
+  color: rgba(23, 18, 15, 0.72) !important;
+}
+
+.wedding-theme-light .bg-black\/25,
+.wedding-theme-light .bg-black\/30 {
+  background-color: rgba(255, 250, 241, 0.76) !important;
+}
+
+.wedding-theme-light .bg-white\/5,
+.wedding-theme-light .bg-white\/10,
+.wedding-theme-light .bg-white\/45,
+.wedding-theme-light .bg-white\/\[0\.06\] {
+  background-color: rgba(255, 250, 241, 0.56) !important;
+}
+
+.wedding-theme-light .border-white\/10,
+.wedding-theme-light .border-white\/15,
+.wedding-theme-light .border-white\/25 {
+  border-color: rgba(23, 18, 15, 0.14) !important;
+}
+
+.wedding-theme-light .divide-white\/15 > :not(:last-child) {
+  border-color: rgba(23, 18, 15, 0.14) !important;
+}
+
+.wedding-theme-light input,
+.wedding-theme-light select,
+.wedding-theme-light textarea {
+  background-color: rgba(255, 250, 241, 0.72) !important;
+  border-color: rgba(23, 18, 15, 0.16) !important;
+  color: #17120f !important;
+}
+
+.wedding-theme-light input::placeholder,
+.wedding-theme-light textarea::placeholder {
+  color: rgba(23, 18, 15, 0.44) !important;
+}
+
+::selection {
+  background: rgba(215, 181, 109, 0.35);
+  color: var(--foreground);
+}
+
+img,
+video {
+  user-select: none;
+}
+
+.font-serif {
+  font-family: var(--font-serif), Georgia, serif;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+.text-pretty {
+  text-wrap: pretty;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
 }

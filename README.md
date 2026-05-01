@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Cinematic Wedding Website
+
+A luxury European wedding website inspired by cinematic scroll transitions:
+large editorial typography, pinned image-led scenes, smooth movement and an
+admin-friendly content workflow.
+
+## Stack
+
+- Next.js App Router, TypeScript and Tailwind CSS
+- Three.js, React Three Fiber and Drei for the WebGL scene layer
+- GSAP ScrollTrigger and Lenis for scroll-driven camera/content transitions
+- Custom admin at `/admin` for image/content management
+- Prisma with Supabase Postgres for content and RSVP submissions
+- Supabase Storage for uploaded wedding media
 
 ## Getting Started
 
-First, run the development server:
+Copy `.env.example` to `.env.local` and add Prisma/Supabase credentials when
+ready. The site runs with polished fallback content before the database is
+configured.
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to see the website.
+Open [http://localhost:3000/admin](http://localhost:3000/admin) to manage
+content after setting `ADMIN_PASSWORD`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Admin Content
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The admin can edit the website theme mode, hero, story, portraits, venue,
+schedule, gallery, travel notes, RSVP deadline and registry note. It can also
+upload images to Supabase Storage and view RSVP submissions.
 
-## Learn More
+## Database Setup
 
-To learn more about Next.js, take a look at the following resources:
+Use Supabase Postgres through Prisma. Add both pooled and direct connection
+strings:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```env
+DATABASE_URL=postgresql://...:6543/postgres?pgbouncer=true
+DIRECT_URL=postgresql://...:5432/postgres
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Then create/update the database schema:
 
-## Deploy on Vercel
+```bash
+npm run prisma:generate
+npm run db:push
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Supabase Storage
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Use the Supabase Storage values in `.env.local`:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_project_url
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your_publishable_key
+SUPABASE_STORAGE_BUCKET=wedding-media
+ADMIN_PASSWORD=choose_a_password
+DATABASE_URL=your_pooled_database_url
+DIRECT_URL=your_direct_database_url
+```
+
+Create a public Supabase Storage bucket named `wedding-media`, or change
+`SUPABASE_STORAGE_BUCKET` to match your bucket. With the publishable key, make
+sure the bucket policies allow image uploads and public reads.
+
+## Production Checklist
+
+- Configure Prisma database URLs, Supabase Storage URL/key, bucket and admin password.
+- Replace fallback copy and imagery from `/admin`.
+- Update `metadataBase` in `src/app/layout.tsx` to the production domain.
+- Deploy the Next.js app to Vercel and keep Supabase hosted on Supabase Cloud.

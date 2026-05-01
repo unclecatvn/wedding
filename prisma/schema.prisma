@@ -1,0 +1,27 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model WeddingContent {
+  id        String   @id @default("default")
+  content   Json
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("wedding_content")
+}
+
+model Rsvp {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String
+  email       String
+  attending   String
+  guests      Int      @default(0)
+  note        String?
+  submittedAt DateTime @default(now()) @map("submitted_at")
+
+  @@map("rsvps")
+}
