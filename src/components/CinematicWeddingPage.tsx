@@ -4,7 +4,8 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
-import { useRef } from "react";
+import { useCallback, useRef, useState } from "react";
+import { InvitationOpeningScene } from "@/components/InvitationOpeningScene";
 import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
 import { RSVPForm } from "@/components/RSVPForm";
 import { WeddingWebGLScene } from "@/components/WeddingWebGLScene";
@@ -14,22 +15,62 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 export function CinematicWeddingPage({ wedding }: { wedding: WeddingContent }) {
   const root = useRef<HTMLDivElement>(null);
+  const musicRef = useRef<HTMLAudioElement>(null);
+  const [musicStarted, setMusicStarted] = useState(false);
+  const [musicPlaying, setMusicPlaying] = useState(false);
   const themeClass =
     wedding.themeMode === "light" ? "wedding-theme-light" : "wedding-theme-dark";
+
+  const startMusic = useCallback(() => {
+    const music = musicRef.current;
+
+    if (!music || musicStarted) {
+      return;
+    }
+
+    music.volume = 0.55;
+    void music
+      .play()
+      .then(() => {
+        setMusicStarted(true);
+        setMusicPlaying(true);
+      })
+      .catch(() => {
+        // Browsers can still block playback if the gesture is interrupted.
+      });
+  }, [musicStarted]);
+
+  const toggleMusic = useCallback(() => {
+    const music = musicRef.current;
+
+    if (!music) {
+      return;
+    }
+
+    music.volume = 0.55;
+
+    if (music.paused) {
+      void music
+        .play()
+        .then(() => {
+          setMusicStarted(true);
+          setMusicPlaying(true);
+        })
+        .catch(() => {
+          setMusicPlaying(false);
+        });
+      return;
+    }
+
+    music.pause();
+    setMusicPlaying(false);
+  }, []);
 
   useGSAP(
     () => {
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
         return;
       }
-
-      gsap.from(".hero-title span", {
-        yPercent: 120,
-        opacity: 0,
-        stagger: 0.08,
-        duration: 1.2,
-        ease: "power4.out",
-      });
 
       gsap.utils.toArray<HTMLElement>(".reveal").forEach((item) => {
         gsap.from(item, {
@@ -107,14 +148,27 @@ export function CinematicWeddingPage({ wedding }: { wedding: WeddingContent }) {
   return (
     <div
       ref={root}
-      className={`relative overflow-hidden bg-background text-foreground ${themeClass}`}
+      className={`invitation-site relative overflow-hidden bg-background text-foreground ${themeClass}`}
     >
+      <audio ref={musicRef} loop preload="auto" src="/music/music.mp3" />
+      <button
+        aria-label={musicPlaying ? "Pause background music" : "Play background music"}
+        aria-pressed={musicPlaying}
+        className={`music-disc-control ${musicPlaying ? "music-disc-playing" : ""}`}
+        onClick={toggleMusic}
+        type="button"
+      >
+        <span className="music-disc" aria-hidden="true" />
+        <span className="sr-only">
+          {musicPlaying ? "Pause background music" : "Play background music"}
+        </span>
+      </button>
       <SmoothScrollProvider />
       <WeddingWebGLScene
         images={getSceneImages(wedding)}
         themeMode={wedding.themeMode}
       />
-      <Hero wedding={wedding} />
+      <InvitationOpeningScene onOpen={startMusic} wedding={wedding} />
       <Story wedding={wedding} />
       <Venue wedding={wedding} />
       <Schedule wedding={wedding} />
@@ -122,9 +176,9 @@ export function CinematicWeddingPage({ wedding }: { wedding: WeddingContent }) {
       <Travel wedding={wedding} />
       <section
         id="rsvp"
-        className="scene relative z-10 px-5 py-20 md:px-10 lg:px-16"
+        className="scene invitation-page-section relative z-10 px-5 py-16 md:px-10 lg:px-16"
       >
-        <div className="mx-auto max-w-5xl">
+        <div className="invitation-sheet mx-auto max-w-5xl p-4 md:p-6">
           <RSVPForm deadline={wedding.rsvpDeadline} />
         </div>
       </section>
@@ -133,67 +187,22 @@ export function CinematicWeddingPage({ wedding }: { wedding: WeddingContent }) {
   );
 }
 
-function Hero({ wedding }: { wedding: WeddingContent }) {
-  return (
-    <section
-      className="hero-section pin-chapter relative z-10 flex min-h-screen items-stretch overflow-hidden"
-      data-webgl-chapter="0"
-    >
-      <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/5 to-background/80" />
-      <header className="absolute left-0 right-0 top-0 z-10 flex items-center justify-between px-5 py-6 text-xs uppercase tracking-[0.32em] text-cream/80 md:px-10 lg:px-16">
-        <a href="#top" className="font-semibold text-cream">
-          {wedding.coupleName}
-        </a>
-        <nav className="hidden gap-8 md:flex">
-          <a href="#story">Story</a>
-          <a href="#details">Details</a>
-          <a href="#gallery">Gallery</a>
-          <a href="#rsvp">RSVP</a>
-        </nav>
-      </header>
-      <div className="relative z-10 flex min-h-screen w-full flex-col justify-end px-5 pb-16 md:px-10 lg:px-16">
-        <p className="reveal text-xs uppercase tracking-[0.45em] text-gold">
-          {wedding.eyebrow}
-        </p>
-        <h1 className="hero-title mt-5 max-w-6xl overflow-hidden font-serif text-6xl leading-[0.9] text-cream md:text-8xl lg:text-[9rem]">
-          {wedding.heroTitle.split(" ").map((word) => (
-            <span key={word} className="mr-5 inline-block">
-              {word}
-            </span>
-          ))}
-        </h1>
-        <div className="mt-8 grid gap-6 md:grid-cols-[1fr_0.7fr] md:items-end">
-          <p className="reveal max-w-2xl text-lg leading-8 text-stone-200">
-            {wedding.heroSubtitle}
-          </p>
-          <div className="reveal flex items-center justify-between border-t border-white/25 pt-5 text-sm uppercase tracking-[0.28em] text-cream">
-            <span>{wedding.dateLabel}</span>
-            <a href="#story" className="text-gold">
-              Scroll
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function Story({ wedding }: { wedding: WeddingContent }) {
   return (
     <section
       id="story"
-      className="scene pin-chapter relative z-10 flex min-h-screen items-center px-5 py-20 md:px-10 lg:px-16"
+      className="scene pin-chapter invitation-page-section relative z-10 flex min-h-screen items-center px-5 py-16 md:px-10 lg:px-16"
       data-webgl-chapter="1"
     >
-      <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-        <div className="rounded-[2rem] border border-white/10 bg-black/25 p-6 backdrop-blur-md md:p-10">
-          <p className="reveal text-xs uppercase tracking-[0.45em] text-gold">
+      <div className="invitation-sheet mx-auto grid max-w-7xl gap-12 p-6 md:p-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+        <div>
+          <p className="reveal text-xs uppercase tracking-[0.45em] text-clay">
             Our story
           </p>
-          <h2 className="reveal mt-5 font-serif text-5xl leading-none text-cream md:text-7xl">
+          <h2 className="reveal mt-5 font-serif text-5xl leading-none text-ink md:text-7xl">
             {wedding.storyTitle}
           </h2>
-          <p className="reveal mt-8 max-w-xl text-lg leading-9 text-stone-300">
+          <p className="reveal mt-8 max-w-xl text-lg leading-9 text-ink/70">
             {wedding.storyBody}
           </p>
         </div>
@@ -201,7 +210,7 @@ function Story({ wedding }: { wedding: WeddingContent }) {
           {wedding.portraits.slice(0, 2).map((image, index) => (
             <div
               key={image.src}
-              className={`reveal relative h-[30rem] overflow-hidden rounded-[12rem] border border-white/10 bg-white/5 ${
+              className={`reveal invitation-photo relative h-[30rem] overflow-hidden rounded-[12rem] border border-ink/10 bg-white/45 ${
                 index === 1 ? "md:mt-24" : ""
               }`}
             >
@@ -224,11 +233,11 @@ function Venue({ wedding }: { wedding: WeddingContent }) {
   return (
     <section
       id="details"
-      className="scene pin-chapter relative z-10 flex min-h-screen items-center px-5 py-20 md:px-10 lg:px-16"
+      className="scene pin-chapter invitation-page-section relative z-10 flex min-h-screen items-center px-5 py-16 md:px-10 lg:px-16"
       data-webgl-chapter="2"
     >
-      <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.72fr_1fr] lg:items-end">
-        <div className="reveal relative h-[32rem] overflow-hidden rounded-[2rem] border border-white/10 bg-white/5">
+      <div className="invitation-sheet mx-auto grid max-w-7xl gap-8 p-6 md:p-10 lg:grid-cols-[0.72fr_1fr] lg:items-end">
+        <div className="reveal invitation-photo relative h-[32rem] overflow-hidden rounded-[2rem] border border-ink/10 bg-white/45">
           <Image
             src={wedding.venueImage.src}
             alt={wedding.venueImage.alt}
@@ -238,17 +247,17 @@ function Venue({ wedding }: { wedding: WeddingContent }) {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
         </div>
-        <div className="reveal rounded-[2rem] border border-white/10 bg-black/30 p-6 backdrop-blur-md md:p-10">
-          <p className="text-xs uppercase tracking-[0.45em] text-gold">
+        <div className="reveal">
+          <p className="text-xs uppercase tracking-[0.45em] text-clay">
             Venue
           </p>
-          <h2 className="mt-4 font-serif text-5xl text-cream md:text-7xl">
+          <h2 className="mt-4 font-serif text-5xl text-ink md:text-7xl">
             {wedding.venueName}
           </h2>
-          <p className="mt-4 text-lg text-stone-200">
+          <p className="mt-4 text-lg text-clay">
             {wedding.venueLocation}
           </p>
-          <p className="mt-6 max-w-2xl text-base leading-8 text-stone-300">
+          <p className="mt-6 max-w-2xl text-base leading-8 text-ink/70">
             {wedding.venueDescription}
           </p>
         </div>
@@ -260,17 +269,17 @@ function Venue({ wedding }: { wedding: WeddingContent }) {
 function Schedule({ wedding }: { wedding: WeddingContent }) {
   return (
     <section
-      className="scene pin-chapter relative z-10 flex min-h-screen items-center px-5 py-20 md:px-10 lg:px-16"
+      className="scene pin-chapter invitation-page-section relative z-10 flex min-h-screen items-center px-5 py-16 md:px-10 lg:px-16"
       data-webgl-chapter="3"
     >
-      <div className="mx-auto max-w-6xl rounded-[2rem] border border-white/10 bg-black/30 p-6 backdrop-blur-md md:p-10">
-        <p className="reveal text-xs uppercase tracking-[0.45em] text-gold">
+      <div className="invitation-sheet mx-auto max-w-6xl p-6 md:p-10">
+        <p className="reveal text-xs uppercase tracking-[0.45em] text-clay">
           Wedding day
         </p>
-        <h2 className="reveal mt-5 font-serif text-5xl text-cream md:text-7xl">
+        <h2 className="reveal mt-5 font-serif text-5xl text-ink md:text-7xl">
           The rhythm of the evening
         </h2>
-        <div className="mt-14 divide-y divide-white/15 border-y border-white/15">
+        <div className="mt-14 divide-y divide-ink/10 border-y border-ink/10">
           {wedding.schedule.map((event) => (
             <div
               key={`${event.time}-${event.title}`}
@@ -278,8 +287,8 @@ function Schedule({ wedding }: { wedding: WeddingContent }) {
             >
               <p className="font-serif text-4xl text-gold">{event.time}</p>
               <div>
-                <h3 className="text-2xl text-cream">{event.title}</h3>
-                <p className="mt-3 max-w-2xl leading-7 text-stone-300">
+                <h3 className="text-2xl text-ink">{event.title}</h3>
+                <p className="mt-3 max-w-2xl leading-7 text-ink/70">
                   {event.details}
                 </p>
               </div>
@@ -295,20 +304,20 @@ function Gallery({ wedding }: { wedding: WeddingContent }) {
   return (
     <section
       id="gallery"
-      className="scene relative z-10 px-5 py-20 md:px-10 lg:px-16"
+      className="scene invitation-page-section relative z-10 px-5 py-16 md:px-10 lg:px-16"
       data-webgl-chapter="4"
     >
-      <div className="mx-auto max-w-7xl">
+      <div className="invitation-sheet mx-auto max-w-7xl p-6 md:p-10">
         <div className="mb-12 flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <div>
-            <p className="reveal text-xs uppercase tracking-[0.45em] text-gold">
+            <p className="reveal text-xs uppercase tracking-[0.45em] text-clay">
               Gallery
             </p>
-            <h2 className="reveal mt-5 font-serif text-5xl text-cream md:text-7xl">
+            <h2 className="reveal mt-5 font-serif text-5xl text-ink md:text-7xl">
               Light, texture and vows
             </h2>
           </div>
-          <p className="reveal max-w-md leading-7 text-stone-300">
+          <p className="reveal max-w-md leading-7 text-ink/70">
             Replace every image from the admin dashboard to turn this into a bespoke
             wedding story without touching code.
           </p>
@@ -317,7 +326,7 @@ function Gallery({ wedding }: { wedding: WeddingContent }) {
           {wedding.gallery.map((image, index) => (
             <div
               key={image.src}
-              className={`reveal relative overflow-hidden rounded-[1.5rem] ${
+              className={`reveal invitation-photo relative overflow-hidden rounded-[1.5rem] ${
                 index === 0 || index === 3 ? "md:col-span-2 md:row-span-2" : ""
               }`}
             >
@@ -338,8 +347,8 @@ function Gallery({ wedding }: { wedding: WeddingContent }) {
 
 function Travel({ wedding }: { wedding: WeddingContent }) {
   return (
-    <section className="scene relative z-10 px-5 py-20 md:px-10 lg:px-16">
-      <div className="mx-auto max-w-7xl rounded-[2rem] bg-cream/90 p-6 text-ink backdrop-blur md:p-10">
+    <section className="scene invitation-page-section relative z-10 px-5 py-16 md:px-10 lg:px-16">
+      <div className="invitation-sheet mx-auto max-w-7xl p-6 text-ink md:p-10">
         <p className="reveal text-xs uppercase tracking-[0.45em] text-clay">
           Travel
         </p>
@@ -372,10 +381,12 @@ function Travel({ wedding }: { wedding: WeddingContent }) {
 function Footer({ wedding }: { wedding: WeddingContent }) {
   return (
     <footer className="relative z-10 px-5 py-12 text-center md:px-10 lg:px-16">
-      <p className="font-serif text-4xl text-cream">{wedding.coupleName}</p>
-      <p className="mt-4 text-xs uppercase tracking-[0.35em] text-stone-400">
-        {wedding.dateLabel} · {wedding.venueLocation}
-      </p>
+      <div className="invitation-sheet mx-auto max-w-4xl p-8">
+        <p className="font-serif text-4xl text-ink">{wedding.coupleName}</p>
+        <p className="mt-4 text-xs uppercase tracking-[0.35em] text-clay">
+          {wedding.dateLabel} · {wedding.venueLocation}
+        </p>
+      </div>
     </footer>
   );
 }

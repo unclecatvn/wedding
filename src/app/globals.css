@@ -112,6 +112,353 @@ video {
   text-wrap: pretty;
 }
 
+.music-disc-control {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 60;
+  display: inline-flex;
+  height: 3.35rem;
+  width: 3.35rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(52, 54, 42, 0.2);
+  border-radius: 999px;
+  background: rgba(246, 239, 226, 0.82);
+  color: var(--ink);
+  backdrop-filter: blur(14px);
+  transition:
+    background 220ms ease,
+    opacity 220ms ease,
+    transform 220ms ease;
+}
+
+.music-disc-control:hover {
+  background: rgba(246, 239, 226, 0.96);
+  transform: translateY(-2px);
+}
+
+.music-disc {
+  position: relative;
+  display: block;
+  height: 2.3rem;
+  width: 2.3rem;
+  border: 0.42rem solid #34362a;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle, #f6efe2 0 16%, transparent 17%),
+    repeating-radial-gradient(circle, rgba(246, 239, 226, 0.55) 0 2px, rgba(52, 54, 42, 0.22) 3px 4px),
+    #59603b;
+}
+
+.music-disc::after {
+  content: "";
+  position: absolute;
+  right: -0.25rem;
+  bottom: 0.1rem;
+  height: 0.55rem;
+  width: 0.55rem;
+  border-radius: 999px;
+  background: #9b6a58;
+}
+
+.music-disc-playing .music-disc {
+  animation: music-disc-spin 3.6s linear infinite;
+}
+
+@keyframes music-disc-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+.invitation-perspective {
+  perspective: 1800px;
+}
+
+.invitation-site {
+  background:
+    radial-gradient(circle at 50% 12%, rgba(215, 181, 109, 0.12), transparent 32%),
+    var(--background);
+}
+
+.invitation-page-section {
+  isolation: isolate;
+}
+
+.invitation-sheet {
+  background:
+    radial-gradient(circle at 12% 8%, rgba(215, 181, 109, 0.16), transparent 28%),
+    linear-gradient(135deg, rgba(255, 250, 241, 0.98), rgba(238, 228, 211, 0.96));
+  border: 1px solid rgba(23, 18, 15, 0.1);
+  border-radius: 2rem;
+  box-shadow:
+    0 28px 90px rgba(0, 0, 0, 0.18),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.45);
+  color: var(--ink);
+}
+
+.invitation-photo {
+  box-shadow: 0 24px 70px rgba(23, 18, 15, 0.18);
+}
+
+.invitation-envelope-stage,
+.invitation-envelope {
+  transform-style: preserve-3d;
+}
+
+.canva-invitation-opening {
+  --canva-paper: #fbfaf4;
+  --canva-ink: #34362a;
+  --canva-leaf: #59603b;
+}
+
+.invitation-vine {
+  position: absolute;
+  left: clamp(0.75rem, 3vw, 2.25rem);
+  top: 0;
+  z-index: 1;
+  height: min(48vh, 28rem);
+  width: 3rem;
+  opacity: 0.78;
+  background:
+    radial-gradient(ellipse at 68% 7%, transparent 47%, #586037 49% 52%, transparent 54%) 0 0 / 2rem 4.8rem repeat-y,
+    radial-gradient(ellipse at 18% 7%, transparent 47%, #586037 49% 52%, transparent 54%) 0 2.4rem / 2rem 4.8rem repeat-y;
+}
+
+.invitation-vine::before {
+  content: "";
+  position: absolute;
+  left: 1.35rem;
+  top: 0;
+  height: 100%;
+  width: 2px;
+  background: #586037;
+  transform: rotate(3deg);
+}
+
+.invitation-letter {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition:
+    opacity 600ms ease,
+    transform 1200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.invitation-open .invitation-letter {
+  opacity: 1;
+  transform: translateY(-2.3rem) scale(1.01);
+}
+
+.invitation-envelope {
+  transition:
+    opacity 700ms ease,
+    transform 1100ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.invitation-open .invitation-envelope {
+  pointer-events: none;
+}
+
+.canva-envelope-frame {
+  aspect-ratio: 800 / 1037;
+  width: min(74vw, 31rem);
+}
+
+.canva-envelope-front {
+  display: block;
+  width: 100%;
+  filter: drop-shadow(0 2rem 2.5rem rgba(83, 82, 58, 0.16));
+}
+
+.canva-envelope-open {
+  aspect-ratio: 800 / 1037;
+  left: 0;
+  top: 0;
+  width: 100%;
+  opacity: 0.98;
+  filter: drop-shadow(0 1.4rem 1.8rem rgba(80, 79, 58, 0.12));
+  transition:
+    opacity 700ms ease,
+    transform 1000ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.invitation-open .canva-envelope-open {
+  opacity: 1;
+  transform: none;
+}
+
+.canva-envelope-open-image {
+  position: absolute;
+  left: -100.25%;
+  top: -9.06%;
+  height: auto;
+  max-width: none;
+  width: 300%;
+}
+
+.canva-heart-card {
+  aspect-ratio: 815 / 744;
+  left: 2.25%;
+  top: 10.1%;
+  width: 95.5%;
+  translate: 0 0;
+  filter: drop-shadow(0 1.35rem 1.75rem rgba(81, 77, 58, 0.12));
+}
+
+.canva-heart-image {
+  display: block;
+  height: auto;
+  width: 100%;
+}
+
+.canva-heart-copy {
+  position: absolute;
+  left: 50%;
+  top: 31.2%;
+  display: flex;
+  width: 55%;
+  transform: translateX(-50%);
+  flex-direction: column;
+  align-items: center;
+}
+
+.canva-envelope-front {
+  aspect-ratio: 800 / 591;
+  left: 0;
+  bottom: 0;
+  translate: 0 0;
+  transition:
+    opacity 650ms ease,
+    transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.canva-envelope-front-image {
+  position: absolute;
+  height: auto;
+  max-width: none;
+  width: 300%;
+}
+
+.canva-envelope-front-image {
+  left: -100.5%;
+  top: -91.38%;
+}
+
+.invitation-open .canva-envelope-front {
+  opacity: 1;
+  transform: none;
+}
+
+.canva-wax-seal {
+  aspect-ratio: 1;
+  top: 59.2%;
+  width: 17.8%;
+  translate: -50% 0;
+  filter: drop-shadow(0 0.8rem 0.85rem rgba(45, 45, 22, 0.28));
+  transition:
+    opacity 500ms ease,
+    transform 850ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.canva-wax-seal-image {
+  display: block;
+  height: auto;
+  width: 100%;
+}
+
+.invitation-open .canva-wax-seal {
+  opacity: 1;
+  transform: none;
+}
+
+.canva-rsvp-cta {
+  bottom: 4.9%;
+  translate: -50% 0;
+  transition:
+    opacity 450ms ease,
+    transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.invitation-open .canva-rsvp-cta {
+  opacity: 0;
+  transform: none;
+}
+
+.wedding-theme-light .invitation-site {
+  background:
+    radial-gradient(circle at 50% 12%, rgba(155, 106, 88, 0.14), transparent 34%),
+    var(--background);
+}
+
+.wedding-theme-light .invitation-sheet {
+  box-shadow:
+    0 24px 70px rgba(124, 81, 69, 0.14),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+}
+
+.invitation-site form {
+  background: transparent !important;
+  border-color: rgba(23, 18, 15, 0.1) !important;
+  color: var(--ink);
+}
+
+.invitation-site form h2,
+.invitation-site form .text-cream {
+  color: var(--ink) !important;
+}
+
+.invitation-site form .text-stone-300,
+.invitation-site form .text-stone-400 {
+  color: rgba(23, 18, 15, 0.68) !important;
+}
+
+.invitation-site form input,
+.invitation-site form select,
+.invitation-site form textarea {
+  background-color: rgba(255, 250, 241, 0.72) !important;
+  border-color: rgba(23, 18, 15, 0.14) !important;
+  color: var(--ink) !important;
+}
+
+@media (max-width: 767px) {
+  .canva-envelope-frame {
+    width: min(86vw, 23rem);
+  }
+
+  .canva-heart-card {
+    left: 2.25%;
+    top: 10.1%;
+    width: 95.5%;
+  }
+
+  .invitation-open .invitation-letter {
+    transform: translateY(-1.7rem) scale(1.01);
+  }
+
+  .canva-heart-copy {
+    top: 30.8%;
+    width: 61%;
+  }
+
+  .canva-wax-seal {
+    top: 58.8%;
+    width: 18%;
+  }
+
+  .canva-rsvp-cta {
+    bottom: 4.7%;
+  }
+
+  .canva-rsvp-button {
+    padding: 0.62rem 2.35rem;
+  }
+
+  .invitation-open .canva-envelope-front {
+    transform: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -120,5 +467,28 @@ video {
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .invitation-letter,
+  .invitation-open .invitation-letter {
+    opacity: 1;
+    transform: translateY(-2.3rem) scale(1.01);
+  }
+
+  .canva-envelope-open,
+  .invitation-open .canva-envelope-open {
+    opacity: 1;
+    transform: none;
+  }
+
+  .canva-envelope-front,
+  .invitation-open .canva-envelope-front {
+    opacity: 1;
+    transform: none;
+  }
+
+  .canva-rsvp-cta,
+  .invitation-open .canva-rsvp-cta {
+    opacity: 0;
   }
 }
